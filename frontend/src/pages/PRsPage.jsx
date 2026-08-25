@@ -9,10 +9,10 @@ import {
   Eye, 
   ChevronLeft, 
   ChevronRight,
-  ArrowUpDown
+  UploadCloud
 } from 'lucide-react';
 
-export const PRsPage = ({ onSelectPR, onOpenNewPR }) => {
+export const PRsPage = ({ onSelectPR, onOpenNewPR, onOpenImportCSV }) => {
   const { user } = useAuth();
   const [prs, setPRs] = useState([]);
   const [total, setTotal] = useState(0);
@@ -62,9 +62,8 @@ export const PRsPage = ({ onSelectPR, onOpenNewPR }) => {
 
   useEffect(() => {
     fetchPRs();
-  }, [page, activeTab, status, department, category, priority, sortBy, sortOrder]);
+  }, [page, activeTab, status, department, category, priority, sortBy, sortOrder, user]);
 
-  // Debounced search trigger
   useEffect(() => {
     const handler = setTimeout(() => {
       fetchPRs();
@@ -130,13 +129,24 @@ export const PRsPage = ({ onSelectPR, onOpenNewPR }) => {
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Purchase Requisitions</h1>
           <p className="text-xs text-slate-500 mt-0.5">Search, monitor and manage organizational procurement workflows.</p>
         </div>
-        <button
-          onClick={onOpenNewPR}
-          className="inline-flex items-center gap-1.5 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-semibold shadow-md shadow-brand-500/20 transition self-start sm:self-auto"
-        >
-          <Plus className="w-4 h-4" />
-          Create Requisition
-        </button>
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          {onOpenImportCSV && (
+            <button
+              onClick={onOpenImportCSV}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-semibold shadow-sm transition"
+            >
+              <UploadCloud className="w-4 h-4 text-emerald-600" />
+              Import CSV / Excel
+            </button>
+          )}
+          <button
+            onClick={onOpenNewPR}
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-semibold shadow-md shadow-brand-500/20 transition"
+          >
+            <Plus className="w-4 h-4" />
+            Create Requisition
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -193,13 +203,13 @@ export const PRsPage = ({ onSelectPR, onOpenNewPR }) => {
         {loading ? (
           <div className="py-16 text-center text-sm text-slate-500">
             <div className="w-6 h-6 border-2 border-brand-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-            Loading requisitions from MongoDB...
+            Loading requisitions...
           </div>
         ) : prs.length === 0 ? (
           <div className="py-16 text-center text-sm text-slate-500 space-y-2">
             <FileText className="w-8 h-8 text-slate-300 mx-auto" />
             <p className="font-semibold text-slate-700">No purchase requisitions found.</p>
-            <p className="text-xs text-slate-400">Try adjusting your filters or create a new requisition.</p>
+            <p className="text-xs text-slate-400">Import a CSV/Excel file or create a new requisition above.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">

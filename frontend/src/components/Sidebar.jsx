@@ -6,10 +6,11 @@ import {
   CheckCircle2, 
   BarChart3, 
   Users, 
-  PlusCircle 
+  PlusCircle,
+  UploadCloud
 } from 'lucide-react';
 
-export const Sidebar = ({ activeTab, setActiveTab, onOpenNewPR, pendingCount = 0 }) => {
+export const Sidebar = ({ activeTab, setActiveTab, onOpenNewPR, onOpenImportCSV, pendingCount = 0 }) => {
   const { user } = useAuth();
   const isApprover = user?.role === 'manager' || user?.role === 'admin';
   const isAdmin = user?.role === 'admin';
@@ -29,14 +30,22 @@ export const Sidebar = ({ activeTab, setActiveTab, onOpenNewPR, pendingCount = 0
 
   return (
     <aside className="w-64 bg-white border-r border-slate-200 min-h-[calc(100vh-4rem)] p-4 flex flex-col justify-between hidden md:flex">
-      <div className="space-y-6">
-        <div>
+      <div className="space-y-4">
+        <div className="space-y-2">
           <button
             onClick={onOpenNewPR}
             className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm shadow-md shadow-brand-500/20 transition-all hover:translate-y-[-1px]"
           >
             <PlusCircle className="w-4 h-4" />
             <span>New Requisition</span>
+          </button>
+          
+          <button
+            onClick={onOpenImportCSV}
+            className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-semibold text-xs transition"
+          >
+            <UploadCloud className="w-4 h-4 text-emerald-600" />
+            <span>Import CSV / Excel</span>
           </button>
         </div>
 
@@ -71,10 +80,9 @@ export const Sidebar = ({ activeTab, setActiveTab, onOpenNewPR, pendingCount = 0
       </div>
 
       <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600">
-        <p className="font-semibold text-slate-800 mb-1">Approval Tier Rules</p>
+        <p className="font-semibold text-slate-800 mb-1">Spreadsheet Bulk Imports</p>
         <p className="text-[11px] leading-relaxed text-slate-500">
-          • Tier 1: Department Manager review<br />
-          • Tier 2: Final Admin authorization & PO release
+          Upload any Excel/CSV spreadsheet to immediately reflect employee requisitions across the dashboard.
         </p>
       </div>
     </aside>

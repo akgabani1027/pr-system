@@ -1,8 +1,8 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { FileText, Users, Shield, Briefcase, UserCheck } from 'lucide-react';
+import { FileText, FileSpreadsheet, PlusCircle } from 'lucide-react';
 
-export const Navbar = ({ onOpenNewPR }) => {
+export const Navbar = ({ onOpenNewPR, onOpenImportCSV }) => {
   const { user, switchRole } = useAuth();
 
   return (
@@ -25,23 +25,34 @@ export const Navbar = ({ onOpenNewPR }) => {
             </div>
           </div>
 
-          {/* Persona Switcher & Actions */}
-          <div className="flex items-center gap-3">
+          {/* Action CTAs & Persona Switcher */}
+          <div className="flex items-center gap-2.5">
+            {onOpenImportCSV && (
+              <button
+                onClick={onOpenImportCSV}
+                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold hover:bg-emerald-100 transition shadow-sm"
+              >
+                <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
+                Import CSV/Excel
+              </button>
+            )}
+
             {onOpenNewPR && (
               <button
                 onClick={onOpenNewPR}
                 className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-brand-600 text-white text-xs font-semibold hover:bg-brand-700 transition shadow-sm"
               >
-                + Create Requisition
+                <PlusCircle className="w-3.5 h-3.5" />
+                New PR
               </button>
             )}
 
             {/* Quick Persona Switcher */}
-            <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl border border-slate-200 text-xs">
-              <span className="text-[11px] font-bold text-slate-500 px-2 hidden md:inline">Active Role:</span>
+            <div className="flex items-center gap-1 bg-slate-100/80 p-1 rounded-xl border border-slate-200 text-xs">
+              <span className="text-[11px] font-bold text-slate-500 px-1.5 hidden md:inline">Role:</span>
               <button
                 onClick={() => switchRole('admin')}
-                className={`px-2.5 py-1 rounded-lg font-semibold transition text-xs ${
+                className={`px-2 py-1 rounded-lg font-semibold transition text-xs ${
                   user.role === 'admin'
                     ? 'bg-purple-600 text-white shadow-sm'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
@@ -51,7 +62,7 @@ export const Navbar = ({ onOpenNewPR }) => {
               </button>
               <button
                 onClick={() => switchRole('manager')}
-                className={`px-2.5 py-1 rounded-lg font-semibold transition text-xs ${
+                className={`px-2 py-1 rounded-lg font-semibold transition text-xs ${
                   user.role === 'manager'
                     ? 'bg-blue-600 text-white shadow-sm'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
@@ -61,7 +72,7 @@ export const Navbar = ({ onOpenNewPR }) => {
               </button>
               <button
                 onClick={() => switchRole('employee')}
-                className={`px-2.5 py-1 rounded-lg font-semibold transition text-xs ${
+                className={`px-2 py-1 rounded-lg font-semibold transition text-xs ${
                   user.role === 'employee'
                     ? 'bg-emerald-600 text-white shadow-sm'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
@@ -69,17 +80,6 @@ export const Navbar = ({ onOpenNewPR }) => {
               >
                 💼 Employee
               </button>
-            </div>
-
-            {/* Current User Info */}
-            <div className="hidden lg:flex items-center gap-2 pl-2 border-l border-slate-200">
-              <div className="w-8 h-8 rounded-full bg-brand-50 border border-brand-200 flex items-center justify-center text-brand-700 font-bold text-xs">
-                {user.name.charAt(0)}
-              </div>
-              <div className="text-left">
-                <div className="text-xs font-semibold text-slate-800 leading-tight">{user.name}</div>
-                <div className="text-[10px] text-slate-400">{user.department}</div>
-              </div>
             </div>
           </div>
         </div>

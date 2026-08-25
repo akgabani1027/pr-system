@@ -9,6 +9,7 @@ import { AnalyticsPage } from './pages/AnalyticsPage';
 import { UsersPage } from './pages/UsersPage';
 import { PRFormModal } from './components/PRFormModal';
 import { PRDetailModal } from './components/PRDetailModal';
+import { CSVImportModal } from './components/CSVImportModal';
 import { prAPI } from './services/api';
 import { CheckCircle2 } from 'lucide-react';
 
@@ -16,9 +17,11 @@ const AppContent = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
   const [selectedPR, setSelectedPR] = useState(null);
   const [pendingCount, setPendingCount] = useState(0);
   const [toastMessage, setToastMessage] = useState('');
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -40,17 +43,22 @@ const AppContent = () => {
 
   useEffect(() => {
     refreshPendingCount();
-  }, [user, activeTab]);
+  }, [user, activeTab, refreshKey]);
 
   const handlePRCreated = (newPR) => {
     showToast(`Requisition ${newPR.pr_number} created successfully!`);
-    refreshPendingCount();
+    setRefreshKey(k => k + 1);
   };
 
   const handlePRUpdated = (updatedPR) => {
     setSelectedPR(updatedPR);
     showToast(`Requisition ${updatedPR.pr_number} updated to '${updatedPR.status}'`);
-    refreshPendingCount();
+    setRefreshKey(k => k + 1);
+  };
+
+  const handleImportSuccess = (count) => {
+    showToast(`Successfully imported ${count} requisitions from spreadsheet!`);
+    setRefreshKey(k => k + 1);
   };
 
   return (
@@ -63,8 +71,11 @@ const AppContent = () => {
         </div>
       )}
 
-      {/* Main Navbar with Role Switcher */}
-      <Navbar onOpenNewPR={() => setIsFormOpen(true)} />
+      {/* Main Navbar */}
+      <Navbar
+        onOpenNewPR={() => setIsFormOpen(true)}
+        onOpenImportCSV={() => setIsImportOpen(true)}
+      />
 
       {/* Body Layout */}
       <div className="flex-1 flex max-w-7xl w-full mx-auto">
@@ -73,6 +84,7 @@ const AppContent = () => {
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           onOpenNewPR={() => setIsFormOpen(true)}
+          onOpenImportCSV={() => setIsImportOpen(true)}
           pendingCount={pendingCount}
         />
 
@@ -80,6 +92,7 @@ const AppContent = () => {
         <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
           {activeTab === 'dashboard' && (
             <DashboardPage
+              key={refreshKey}
               onSelectPR={(pr) => setSelectedPR(pr)}
               onNavigatePRs={() => setActiveTab('prs')}
               onNavigateApprovals={() => setActiveTab('approvals')}
@@ -89,23 +102,26 @@ const AppContent = () => {
 
           {activeTab === 'prs' && (
             <PRsPage
+              key={refreshKey}
               onSelectPR={(pr) => setSelectedPR(pr)}
               onOpenNewPR={() => setIsFormOpen(true)}
+              onOpenImportCSV={() => setIsImportOpen(true)}
             />
           )}
 
           {activeTab === 'approvals' && (
             <ApprovalsPage
+              key={refreshKey}
               onSelectPR={(pr) => setSelectedPR(pr)}
             />
           )}
 
           {activeTab === 'analytics' && (
-            <AnalyticsPage />
+            <AnalyticsPage key={refreshKey} />
           )}
 
           {activeTab === 'users' && user?.role === 'admin' && (
-            <UsersPage />
+            <UsersPage key={refreshKey} />
           )}
         </main>
       </div>
@@ -123,6 +139,13 @@ const AppContent = () => {
         isOpen={!!selectedPR}
         onClose={() => setSelectedPR(null)}
         onUpdate={handlePRUpdated}
+      />
+
+      {/* CSV / Excel Import Modal */}
+      <CSVImportModal
+        isOpen={isImportOpen}
+        onClose={() => setIsImportOpen(false)}
+        onSuccess={handleImportSuccess}
       />
     </div>
   );
