@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
-import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { PRsPage } from './pages/PRsPage';
 import { ApprovalsPage } from './pages/ApprovalsPage';
@@ -10,11 +9,11 @@ import { AnalyticsPage } from './pages/AnalyticsPage';
 import { UsersPage } from './pages/UsersPage';
 import { PRFormModal } from './components/PRFormModal';
 import { PRDetailModal } from './components/PRDetailModal';
-import { prAPI, analyticsAPI } from './services/api';
+import { prAPI } from './services/api';
 import { CheckCircle2 } from 'lucide-react';
 
 const AppContent = () => {
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedPR, setSelectedPR] = useState(null);
@@ -27,11 +26,12 @@ const AppContent = () => {
   };
 
   const refreshPendingCount = async () => {
-    if (!user) return;
     try {
-      if (user.role === 'manager' || user.role === 'admin') {
+      if (user?.role === 'manager' || user?.role === 'admin') {
         const res = await prAPI.list({ awaiting_my_approval: true, limit: 1 });
-        setPendingCount(res.data.total || 0);
+        setPendingCount(res.data?.total || 0);
+      } else {
+        setPendingCount(0);
       }
     } catch (e) {
       console.error(e);
@@ -41,21 +41,6 @@ const AppContent = () => {
   useEffect(() => {
     refreshPendingCount();
   }, [user, activeTab]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="flex items-center gap-3 text-brand-600 font-semibold text-sm">
-          <div className="w-6 h-6 border-2 border-brand-600 border-t-transparent rounded-full animate-spin"></div>
-          <span>Starting PR System Session...</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <LoginPage />;
-  }
 
   const handlePRCreated = (newPR) => {
     showToast(`Requisition ${newPR.pr_number} created successfully!`);
@@ -78,7 +63,7 @@ const AppContent = () => {
         </div>
       )}
 
-      {/* Main Navbar */}
+      {/* Main Navbar with Role Switcher */}
       <Navbar onOpenNewPR={() => setIsFormOpen(true)} />
 
       {/* Body Layout */}
@@ -119,7 +104,7 @@ const AppContent = () => {
             <AnalyticsPage />
           )}
 
-          {activeTab === 'users' && user.role === 'admin' && (
+          {activeTab === 'users' && user?.role === 'admin' && (
             <UsersPage />
           )}
         </main>
