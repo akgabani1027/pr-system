@@ -131,6 +131,7 @@ const AppContent = () => {
         isOpen={isFormOpen}
         onClose={() => setIsFormOpen(false)}
         onSuccess={handlePRCreated}
+        onOpenImportCSV={() => setIsImportOpen(true)}
       />
 
       {/* PR Detail Modal */}

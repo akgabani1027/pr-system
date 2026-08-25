@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { prAPI } from '../services/api';
-import { X, Plus, Trash2, Upload, AlertCircle } from 'lucide-react';
+import { X, Plus, Trash2, Upload, AlertCircle, FileSpreadsheet } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
-export const PRFormModal = ({ isOpen, onClose, onSuccess }) => {
+export const PRFormModal = ({ isOpen, onClose, onSuccess, onOpenImportCSV }) => {
   const { user } = useAuth();
 
   const [title, setTitle] = useState('');
@@ -101,7 +101,7 @@ export const PRFormModal = ({ isOpen, onClose, onSuccess }) => {
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
           <div>
             <h2 className="text-lg font-bold text-slate-900">New Purchase Requisition</h2>
-            <p className="text-xs text-slate-500">Fill in requisition details and specify required line items.</p>
+            <p className="text-xs text-slate-500">Fill in requisition details or upload an Excel/CSV spreadsheet.</p>
           </div>
           <button onClick={onClose} className="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100">
             <X className="w-5 h-5" />
@@ -110,6 +110,31 @@ export const PRFormModal = ({ isOpen, onClose, onSuccess }) => {
 
         {/* Body */}
         <div className="p-6 max-h-[75vh] overflow-y-auto space-y-5">
+          {/* Quick Import Banner inside Modal */}
+          {onOpenImportCSV && (
+            <div className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200">
+              <div className="flex items-center gap-2.5">
+                <div className="p-1.5 rounded-lg bg-emerald-600 text-white">
+                  <FileSpreadsheet className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-xs font-bold text-emerald-950 block">Want to import from Excel or CSV?</span>
+                  <span className="text-[11px] text-emerald-700">Bulk upload your spreadsheet instead of typing one-by-one.</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onOpenImportCSV();
+                }}
+                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow-sm transition whitespace-nowrap"
+              >
+                Import Excel / CSV
+              </button>
+            </div>
+          )}
+
           {error && (
             <div className="flex items-center gap-2 p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs">
               <AlertCircle className="w-4 h-4 flex-shrink-0" />
