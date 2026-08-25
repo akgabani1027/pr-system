@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+
+# Local database & media storage
+backend/data/
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
