@@ -5,8 +5,8 @@ import { FileText, Shield, User, Lock, Mail, Building, AlertCircle } from 'lucid
 export const LoginPage = () => {
   const { login, register } = useAuth();
   const [isRegister, setIsRegister] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('employee@prsystem.com');
+  const [password, setPassword] = useState('password123');
   const [name, setName] = useState('');
   const [department, setDepartment] = useState('Engineering');
   const [role, setRole] = useState('employee');
@@ -25,20 +25,22 @@ export const LoginPage = () => {
       }
     } catch (err) {
       console.error(err);
-      setError(err.response?.data?.detail || 'Authentication failed. Please check your credentials.');
+      setError(err.response?.data?.detail || err.message || 'Authentication failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
   };
 
   const handleQuickLogin = async (demoEmail) => {
+    setEmail(demoEmail);
+    setPassword('password123');
     setError('');
     setLoading(true);
     try {
       await login(demoEmail, 'password123');
     } catch (err) {
       console.error(err);
-      setError('Quick login failed.');
+      setError(err.response?.data?.detail || 'Quick login failed.');
     } finally {
       setLoading(false);
     }
@@ -170,7 +172,7 @@ export const LoginPage = () => {
               disabled={loading}
               className="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm shadow-md shadow-brand-500/20 transition disabled:opacity-50 mt-2"
             >
-              {loading ? 'Authenticating...' : isRegister ? 'Complete Registration' : 'Sign In'}
+              {loading ? 'Signing In...' : isRegister ? 'Complete Registration' : 'Sign In'}
             </button>
           </form>
 
@@ -184,7 +186,7 @@ export const LoginPage = () => {
                 type="button"
                 onClick={() => handleQuickLogin('employee@prsystem.com')}
                 disabled={loading}
-                className="p-2 rounded-lg border border-emerald-200 bg-emerald-50/60 hover:bg-emerald-100 text-emerald-800 text-[11px] font-semibold text-center transition"
+                className="p-2 rounded-lg border border-emerald-200 bg-emerald-50/70 hover:bg-emerald-100 text-emerald-800 text-[11px] font-semibold text-center transition"
               >
                 Employee
               </button>
@@ -192,7 +194,7 @@ export const LoginPage = () => {
                 type="button"
                 onClick={() => handleQuickLogin('manager@prsystem.com')}
                 disabled={loading}
-                className="p-2 rounded-lg border border-blue-200 bg-blue-50/60 hover:bg-blue-100 text-blue-800 text-[11px] font-semibold text-center transition"
+                className="p-2 rounded-lg border border-blue-200 bg-blue-50/70 hover:bg-blue-100 text-blue-800 text-[11px] font-semibold text-center transition"
               >
                 Manager
               </button>
@@ -200,12 +202,12 @@ export const LoginPage = () => {
                 type="button"
                 onClick={() => handleQuickLogin('admin@prsystem.com')}
                 disabled={loading}
-                className="p-2 rounded-lg border border-purple-200 bg-purple-50/60 hover:bg-purple-100 text-purple-800 text-[11px] font-semibold text-center transition"
+                className="p-2 rounded-lg border border-purple-200 bg-purple-50/70 hover:bg-purple-100 text-purple-800 text-[11px] font-semibold text-center transition"
               >
                 Admin
               </button>
             </div>
-            <p className="text-[10px] text-slate-400 text-center mt-2">Default test password: <code className="bg-slate-100 px-1 py-0.5 rounded">password123</code></p>
+            <p className="text-[10px] text-slate-400 text-center mt-2">Default test password: <code className="bg-slate-100 px-1 py-0.5 rounded text-slate-600">password123</code></p>
           </div>
         </div>
       </div>
